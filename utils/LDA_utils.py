@@ -39,26 +39,26 @@ class disambiguated_LDA:
     distinguish between ambiguous topics. Note that topic ambiguity can indicate a problem with the model; look
     into this more (LDA alpha and beta)
     '''
-    def __init__(self,lda,d):
-        self.lda                    = lda
-        self.d                      = d
-        self.root                   = np.arange(self.lda.num_topics)
-        self.branches               = []
-        self.label_trees            = []
-        self.topics                 = self.lda.get_topics()
-        self.original_topics        = self.lda.get_topics()
-        self.av                     = self.topics.mean(axis = 0)
-        self.demeaned_topics        = np.array([i - self.av for i in self.topics])
+    def __init__(self,lda,dictionary):
+        self.lda = lda
+        self.dictionary = dictionary
+        self.root = np.arange(self.lda.num_topics)
+        self.branches = []
+        self.label_trees = []
+        self.topics = self.lda.get_topics()
+        self.original_topics = self.lda.get_topics()
+        self.av = self.topics.mean(axis = 0)
+        self.demeaned_topics = np.array([i - self.av for i in self.topics])
         self.find_topics()
         self.label(self.root)
         
     
     def find_topics(self):
-        tops_                       = []
-        h1                          = np.argsort(self.demeaned_topics)
+        self._tops = []
+        h1 = np.argsort(self.demeaned_topics)
         for j in h1:
-            tops_.append([d1.get(i) for i in j[:8]])
-        self.tops                   = np.array(tops_)
+            self._tops.append([d1.get(i) for i in j[:8]])
+        self.tops = np.array(self._tops)
     
     def label(self,branch):
         self.branch_labels = []
@@ -70,9 +70,9 @@ class disambiguated_LDA:
         self.label_trees.append(self.branch_labels)
         
     def disambiguate(self,branch):
-        self.recent                 = self.demeaned_topics[branch]
-        self.av_                    = self.recent.mean(axis = 0)
-        self.av_demeaned            = np.array([i - self.av_ for i in self.recent])
+        self.recent = self.demeaned_topics[branch]
+        self._av = self.recent.mean(axis = 0)
+        self.av_demeaned = np.array([i - self._av for i in self.recent])
         for i in range(len(branch)):
             self.demeaned_topics[branch[i]] = self.av_demeaned[i]
         self.find_topics()
@@ -96,14 +96,14 @@ class corpus_aggregator(disambiguated_LDA):
     for documents with missing topics (which is many of them)
     '''
     def analyze_corpus(self,corpus):
-        self.corpus                                = [i for i in corpus if len(i)>0]
-        self.running                               = np.zeros(len(self.topics))
-        self._unsanitized                          = self.lda.get_document_topics(self.corpus)
-        i                                          = 0 
+        self.corpus = [i for i in corpus if len(i)>0]
+        self.running = np.zeros(len(self.topics))
+        self._unsanitized = self.lda.get_document_topics(self.corpus)
+        i = 0 
         for j in self._unsanitized:
-            i                                      +=1
-            present                                = list(np.array(j).T[0])
+            i +=1
+            present = list(np.array(j).T[0])
             for k in range(len(self.running)):
                 if k in present:
-                    self.running[k]                += np.array(j).T[1][present.index(k)]
+                    self.running[k] += np.array(j).T[1][present.index(k)]
         self.running = np.array(self.running)/i
