@@ -70,6 +70,7 @@ class disambiguated_LDA:
         self.label_trees.append(self.branch_labels)
         
     def disambiguate(self,branch):
+        '''This de-means ambiguous topics to differentiate between them'''
         self.recent = self.demeaned_topics[branch]
         self._av = self.recent.mean(axis = 0)
         self.av_demeaned = np.array([i - self._av for i in self.recent])
@@ -89,21 +90,3 @@ class disambiguated_LDA:
             self.final_labels.append(top)
 
 
-class corpus_aggregator(disambiguated_LDA):
-    '''
-    Class that can, given a BOW corpus and disambiguated LDA model (using on the same dictionary)
-    calculate the topic distribution within the corpus, marginalizing over documents and accounting
-    for documents with missing topics (which is many of them)
-    '''
-    def analyze_corpus(self,corpus):
-        self.corpus = [i for i in corpus if len(i)>0]
-        self.running = np.zeros(len(self.topics))
-        self._unsanitized = self.lda.get_document_topics(self.corpus)
-        i = 0 
-        for j in self._unsanitized:
-            i +=1
-            present = list(np.array(j).T[0])
-            for k in range(len(self.running)):
-                if k in present:
-                    self.running[k] += np.array(j).T[1][present.index(k)]
-        self.running = np.array(self.running)/i

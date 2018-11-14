@@ -59,3 +59,44 @@ class decision_tree_data_holder:
 			                    self.test_Y.append(2.)
 			                else:
 			                    self.test_Y.append(1.)
+
+
+def extract_time_series(df,rng):
+	universe = np.unique(df['Ticker Symbol'].values)
+	all_pros = []
+	all_cons = []
+	all_rec  = []
+	for comp in universe[:]:
+	    pros = []
+	    cons = []
+	    rec  = []
+	    for d in rng[:]:
+	        try:
+	            active_pros = []
+	            active_cons = []
+	            active_rec  = []
+	            valids = (d-df['As of Date']>pd.Timedelta('30 days 00:00:00')).values
+	            doc = df.iloc[np.logical_and(df['Ticker Symbol'] == comp,valids).values]
+	            doc = pd.DataFrame({'PROs':doc['PROs'],'CONs':doc['CONs'],'Rec':doc['Recommends Value']})
+	            doc = doc.dropna()
+	            for j in range(len(doc)):
+	                cleaned_pro = re.sub('([A-Za-z][A-Z][a-z])',clean_multisentence_camel_case_,doc['PROs'].iloc[j]).lower()
+	                cp = analyzer.polarity_scores(cleaned_pro)
+	                p = cp['pos']-cp['neg']
+	                active_pros.append(p)
+	                cleaned_con = re.sub('([A-Za-z][A-Z][a-z])',clean_multisentence_camel_case_,doc['CONs'].iloc[j]).lower()
+	                cc = analyzer.polarity_scores(cleaned_con)
+	                c = cc['pos']-cc['neg']
+	                active_cons.append(c)
+	                active_rec.append(doc['Rec'].mean())
+	        except TypeError:
+	            active_pros.append([])
+	            active_cons.append([])
+	            active_rec.append([])
+	        pros.append(active_pros)
+	        cons.append(active_cons)
+	        rec.append(active_rec)
+	    all_pros.append(pros)
+	    all_cons.append(cons)
+	    all_rec.append(rec)
+	return all_pros,all_cons,all_rec
