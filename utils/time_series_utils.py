@@ -14,7 +14,7 @@ from gensim.corpora.dictionary import Dictionary
 from gensim.models import LdaModel
 import pyLDAvis.gensim as gensimvis
 
-class decision_tree_data_holder:
+class DecisionTreeDataHolder:
 	'''
 	Class that holds the data from which we will make time series predictions.
 	Takes
