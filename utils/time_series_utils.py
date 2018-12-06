@@ -32,33 +32,33 @@ class DecisionTreeDataHolder:
 		self.universe = universe
 		self.net = net
 
-		def create_train_test():
-			for u in range(len(self.universe)):
+	def create_train_test():
+		for u in range(len(self.universe)):
+		    comp = self.net[self.universe[u]]
+		    for i in range(len(rng)):
+			if i > buffer_ and i < buffer_+10:
 			    comp = self.net[self.universe[u]]
-			    for i in range(len(rng)):
-			        if i > buffer_ and i < buffer_+10:
-			            comp = self.net[self.universe[u]]
-			            d = VZ.values[i:i+self.num_features+self.time_gap]
-			            d = (d-d[self.num_features])/d[self.num_features]
-			            if not np.isnan(d).any():
-			                self.train_X.append(d[:self.num_features])
-			                if d[-1] < -0.0035:
-			                    self.train_Y.append(0.)
-			                elif d[-1]> 0.0045:
-			                    self.train_Y.append(2.)
-			                else:
-			                    self.train_Y.append(1.)
-			        elif i > buffer_+10 and i < len(comp)-self.num_features-self.time_gap:
-			            d = comp.values[i:i+self.num_features+self.time_gap]
-			            d = (d-d[self.num_features])/d[self.num_features]
-			            if not np.isnan(d).any():
-			                self.test_X.append(d[:self.num_features])
-			                if d[-1] < -0.0035:
-			                    self.test_Y.append(0.)
-			                elif d[-1]> 0.0045:
-			                    self.test_Y.append(2.)
-			                else:
-			                    self.test_Y.append(1.)
+			    d = VZ.values[i:i+self.num_features+self.time_gap]
+			    d = (d-d[self.num_features])/d[self.num_features]
+			    if not np.isnan(d).any():
+				self.train_X.append(d[:self.num_features])
+				if d[-1] < -0.0035:
+				    self.train_Y.append(0.)
+				elif d[-1]> 0.0045:
+				    self.train_Y.append(2.)
+				else:
+				    self.train_Y.append(1.)
+			elif i > buffer_+10 and i < len(comp)-self.num_features-self.time_gap:
+			    d = comp.values[i:i+self.num_features+self.time_gap]
+			    d = (d-d[self.num_features])/d[self.num_features]
+			    if not np.isnan(d).any():
+				self.test_X.append(d[:self.num_features])
+				if d[-1] < -0.0035:
+				    self.test_Y.append(0.)
+				elif d[-1]> 0.0045:
+				    self.test_Y.append(2.)
+				else:
+				    self.test_Y.append(1.)
 
 
 def extract_time_series(df,rng):
