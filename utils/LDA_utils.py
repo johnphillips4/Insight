@@ -54,7 +54,7 @@ def LDA_from_df(df,num_topics=4,alpha='auto'):
     words = []
     for review in df['PROs'].values:
         cleaned_text = re.sub('([A-Za-z][A-Z][a-z])',clean_multisentence_camel_case_,review).lower()
-        tokens = re.sub('(\.|\,|\d|-|\\\\)',' ',cleaned_text)
+        tokens = re.sub('(\.|\,|\d|-)',' ',cleaned_text)
         tokens = remove_stopwords(tokens)
         tokens = nltk.tokenize.word_tokenize(tokens)
         tokens = [i for i in tokens if i not in stop]
