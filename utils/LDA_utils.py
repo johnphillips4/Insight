@@ -17,6 +17,25 @@ from gensim.parsing.preprocessing import remove_stopwords
 import pyLDAvis
 import warnings
 
+
+def format topicality(topic_list,all_topics):
+    """
+    Formats topic list
+
+    Keyword arguments:
+    topic_list -- the list of topics present in a chunk of text
+    all_topics -- the list of all topics present in the LDA model
+    """
+    present_topics = [topic_list[k][0] for k in range(len(topic_list))]
+    topics_well_behaved = []
+    for k in range(len(all_topics)):
+        if k in present_topics:
+            topics_well_behaved.append(topic_list[present_topics.index(k)][1])
+        else:
+            topics_well_behaved.append(0)
+    return topics_well_behaved
+
+
 def clean_up(review):
 	'''
 	Many reviews have sentence structure where sentences are connected with no punctuation, e.g.
