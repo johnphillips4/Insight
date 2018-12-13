@@ -17,6 +17,7 @@ from gensim.parsing.preprocessing import remove_stopwords
 import pyLDAvis
 import warnings
 from utils import utils
+import pickle
 
 stop = ['the','a','and','an','but','to','is','of','you','are','i','for',
     'to','in','as','as','if','work','with','it','was','on',
@@ -105,7 +106,7 @@ def LDA_from_df(df,num_topics=4,alpha='auto'):
     c = [d.doc2bow(text) for text in flat_reviews]
     lda = LdaModel(c, num_topics=num_topics,alpha=alpha)
     lda.save('tmp/lda')
-    np.save('tmp/d.npy',d)
+    pickle.dump(d,'tmp/d')
     return lda,d
 
 class disambiguated_LDA:
