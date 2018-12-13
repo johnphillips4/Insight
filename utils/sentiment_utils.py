@@ -18,7 +18,14 @@ from utils import utils
 
 
 
-def sentiment_company(company,df):
+def sentiment_company(df,company):
+	"""
+    Scores each of a company's "Pro" and "Con" reviews
+
+    Keyword arguments:
+    df -- pandas dataframe containing reviews
+    company -- ticker symbol for company
+    """
     netter = lambda x:x['pos']-x['neg']
     analyzer = vaderSentiment.SentimentIntensityAnalyzer()
     comp = df.loc[df['Ticker Symbol']==company] # formatting
