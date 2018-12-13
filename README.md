@@ -5,7 +5,7 @@ sentiment.py takes a dataframe containing "Pro" and "Con" text reviews and conve
 
 LDA.py takes a dataframe containing "Pro" text reviews and discovers the topics contained within them. It also adds a model file to the "tmp/" folder that allows the user to explore the discovered topics.
 
-time_series.py takes a dataframe containing "Pro," "Con," and binary recommendation values and develops a model that predicts employee sentiment six months from now using a gradient boosting regression tree. 
+time_series.py takes a dataframe containing "Pro," "Con," and binary recommendation values and develops a gradient boosting regression tree model that predicts employee sentiment six months ahead of time. 
 
 The "utils" folder contains modularized utiltity functions that are called by the .py files, and may be used by the user as required.
 
