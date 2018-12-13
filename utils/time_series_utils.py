@@ -21,12 +21,19 @@ class DecisionTreeDataHolder:
     '''
     Class that holds the data from which we will make time series predictions.
     Takes
-
-    num_features: number of previous month data to use as features
-    time_gap: number of months in the future we want to predict
-    buffer: amount of "burn-in" to allow
+	
+	Keyword Arguments - 
+    universe - list of companies in our universe
+    net - df containing net sentiment scores for each company for each date
+    rec - df containing recommendation scores for each company for each date
+    rng - pd.daterange object
+    num_features - number of preceding months the model uses as features
+    time_gap - time gap between the features and the prediction 
+    buffer_ - amount of "burn in" allowed at the beginning of the data
+	steps_train - number of dates that go into the training set
+	steps_val - number of dates that go into the validation set
     ''' 
-    def __init__(self,universe,net,rec,rng,num_features = 6,time_gap = 2,buffer_ = 10,steps_train = 10,steps_val = 5):
+    def __init__(self,universe,net,rec,rng,num_features = 6,time_gap = 6,buffer_ = 10,steps_train = 10,steps_val = 5):
         self.num_features = num_features
         self.time_gap = time_gap
         self.buffer_ = buffer_ 
@@ -61,6 +68,12 @@ class DecisionTreeDataHolder:
 
 
 def process_doc(doc):
+    """
+	Extract mean pros, cons, and recommendation scores from a dataframe
+
+    Keyword arguments:
+    doc -- pandas dataframe containing reviews
+    """
 	if doc.empty:
 		return np.nan,np.nan,np.nan
 	analyzer = vaderSentiment.SentimentIntensityAnalyzer()
@@ -82,6 +95,14 @@ def process_doc(doc):
 
 
 def extract_time_series_one_company(df,comp,rng):
+    """
+	Extract time series for pros, cons, and rec for a single company over the date range rng
+
+    Keyword arguments:
+    df - dataframe containing reviews
+    comp - ticker symbol for company
+    rng - pd.daterange object
+    """
 	pros = []
 	cons = []
 	rec  = []
@@ -98,6 +119,14 @@ def extract_time_series_one_company(df,comp,rng):
 
 
 def extract_time_series_all(df,rng):
+    """
+	Extract time series for pros, cons, and rec for a all companies over the date range rng
+
+    Keyword arguments:
+    df - dataframe containing reviews
+    rng - pd.daterange object
+    """
+
 	universe = np.unique(df['Ticker Symbol'].values)
 	all_pros = []
 	all_cons = []
