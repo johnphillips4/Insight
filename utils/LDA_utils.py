@@ -85,6 +85,15 @@ def topics_for_one_company(df,stock,lda,d):
     return comp_topics/counter  
 
 def topics_for_all_companies(df,lda,dictionary):
+    """
+    Decomposes all company's reviews into topics
+
+    Keyword arguments:
+    df -- pandas dataframe containing reviews
+    lda -- lda model file
+    dictionary -- lda dictionary file
+    """
+
     universe = np.unique(df['Ticker Symbol'].values)
     all_topics = []
     for stock in universe:
@@ -93,6 +102,14 @@ def topics_for_all_companies(df,lda,dictionary):
 
 
 def LDA_from_df(df,num_topics=4,alpha='auto'):
+    """
+    Generates an LDA model from a review datafile
+
+    Keyword arguments:
+    df -- pandas dataframe containing reviews
+    num_topics -- number of topics in the LDA model
+    alpha -- alpha parameter in the LDA model
+    """
     flat_reviews = []
     words = []
     for review in df['PROs'].values:
