@@ -3,7 +3,9 @@ This repository contains code useful for sentiment analysis and time series-base
 
 sentiment.py takes a dataframe containing "Pro" and "Con" text reviews and converts them into sentiment scores on the range [-1,1] using VADER (c.f. http://comp.social.gatech.edu/papers/icwsm14.vader.hutto.pdf).
 
-The repository will be updated soon with code that assigns sentiment-weighted topic scores and time series analyses.
+LDA.py takes a dataframe containing "Pro" text reviews and discovers the topics contained within them. It also adds a model file to the "tmp/" folder that allows the user to explore the discovered topics.
+
+time_series.py takes a dataframe containing "Pro," "Con," and binary recommendation values and develops a model that predicts employee sentiment six months from now using a gradient boosting regression tree. 
 
 The "utils" folder contains modularized utiltity functions that are called by the .py files, and may be used by the user as required.
 
