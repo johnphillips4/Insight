@@ -21,12 +21,12 @@ def main(df,output_filename):
 	recommendation = []
 	universe = np.unique(df['Ticker Symbol'].values)
 	for stock in universe:
-		sents = sentiment_utils.sentiment_company(stock,df)
+		sents = sentiment_utils.sentiment_company(df,stock)
 		pros.append(np.mean(sents[0]))
 		cons.append(np.mean(sents[1]))
 		recommendation.append(np.mean(sents[2]))
 	output = pd.DataFrame({'Pros':pros,'Cons':cons,'Rec':recommendation},index = universe)
-	output.to_csv('sentiment.csv')
+	output.to_csv(output_filename)
 
 if __name__ == '__main__':
 	'''Takes one necessary argument'''
