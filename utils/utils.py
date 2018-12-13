@@ -22,13 +22,13 @@ def clean_up(review):
 	Many reviews have sentence structure where sentences are connected with no punctuation, e.g.
 	"Hello worldHello world" This code will separate this into "hello world hello world"
 	'''
-    tokenable = re.sub('([A-Za-z][A-Z][a-z])',clean_multisentence_camel_case,review).lower()
-    return tokenable
+	tokenable = re.sub('([A-Za-z][A-Z][a-z])',clean_multisentence_camel_case,review).lower()
+	return tokenable
 
 
 def clean_multisentence_camel_case_(bit_of_string):
 	'''
 	Function for use in clean up
 	'''
-    j=1
-    return bit_of_string.group(0)[:j]+' '+bit_of_string.group(0)[j:]
+	j=1
+	return bit_of_string.group(0)[:j]+' '+bit_of_string.group(0)[j:]

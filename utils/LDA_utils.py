@@ -16,6 +16,7 @@ from vaderSentiment import vaderSentiment as vaderSentiment
 from gensim.parsing.preprocessing import remove_stopwords
 import pyLDAvis
 import warnings
+from utils import utils
 
 stop = ['the','a','and','an','but','to','is','of','you','are','i','for',
     'to','in','as','as','if','work','with','it','was','on',
@@ -39,21 +40,62 @@ def format_topicality(topic_list,all_topics):
     return topics_well_behaved
 
 
-def clean_up(review):
-    '''
-    Many reviews have sentence structure where sentences are connected with no punctuation, e.g.
-    "Hello worldHello world" This code will separate this into "hello world hello world"
-    '''
-    
-    tokenable = re.sub('([A-Za-z][A-Z][a-z])',clean_multisentence_camel_case_,review).lower()
-    return tokenable
+
+
+def topics_for_one_company(df,stock,lda,d):
+    """
+    Formats topic list
+
+    Keyword arguments:
+    df -- pandas dataframe containing reviews
+    all_topics -- the list of all topics present in the LDA model
+    """
+
+    t = lda.get_topics()
+
+
+    comp = df.loc[df['Ticker Symbol']==stock]
+
+    # Now loop through the reviews, divide the reviews into topics, and weigh topics according to sentiment    
+    netter = lambda x:x['pos']-x['neg']
+    analyzer = vaderSentiment.SentimentIntensityAnalyzer()
+    counter = 0
+    comp_topics = np.zeros(len(t))
+    for i in range(len(comp)):
+        active_pro = comp['PROs'].iloc[i]
+        active_pro_s = re.split(r'(?:\.|!|, but|, and)',active_pro.lower())  # subdivide reviews by punctuation and conjunctions
+        active_pro_s = [l for l in active_pro_s if l]  # drop empty reviews
+        review_doc = [d.doc2bow(active_pro_s[j].split()) for j in range(len(active_pro_s))]
+        topics = lda.get_document_topics(review_doc)
+        sent = [netter(analyzer.polarity_scores(utils.clean_up(active_pro_s[i]))) for i in range(len(active_pro_s))]
+        sent_normed = np.zeros(len(t))
+        tot_sent = 0
+        for j in range(len(sent)):
+            topics_well_behaved = format_topicality(topics[j],t)
+            if abs(sent[j]) > 0.1:     # We only want to count reviews with non-zero sentiment
+                sent_normed += np.array([topics_well_behaved[i]*sent[j] for i in range(len(t))]) # weigh by sentiment
+                tot_sent += 1
+        if tot_sent > 0:
+            counter +=1
+            comp_topics += sent_normed
+
+    # Return the average weighted topicality 
+
+    return comp_topics/counter  
+
+def topics_for_all_companies(df,lda,dictionary):
+    universe = np.unique(df['Ticker Symbol'].values)
+    all_topics = []
+    for stock in universe:
+        all_topics.append(topics_for_one_company(df,stock,lda,dictionary))
+    return all_topics
 
 
 def LDA_from_df(df,num_topics=4,alpha='auto'):
     flat_reviews = []
     words = []
     for review in df['PROs'].values:
-        cleaned_text = re.sub('([A-Za-z][A-Z][a-z])',clean_multisentence_camel_case_,review).lower()
+        cleaned_text = re.sub('([A-Za-z][A-Z][a-z])',utils.clean_multisentence_camel_case_,review).lower()
         tokens = re.sub('(\.|\,|\d|-)',' ',cleaned_text)
         tokens = remove_stopwords(tokens)
         tokens = nltk.tokenize.word_tokenize(tokens)
@@ -65,13 +107,6 @@ def LDA_from_df(df,num_topics=4,alpha='auto'):
     lda.save('tmp/lda')
     np.save('tmp/d.npy',d)
     return lda,d
-
-def clean_multisentence_camel_case_(bit_of_string):
-    '''
-    Function for use in clean up
-    '''
-    j=1
-    return bit_of_string.group(0)[:j]+' '+bit_of_string.group(0)[j:]
 
 class disambiguated_LDA:
     '''
