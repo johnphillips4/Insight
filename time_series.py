@@ -44,7 +44,7 @@ def main(df,output_filename,rng):
 	model_tree = GradientBoostingRegressor(n_estimators=10)
 	result_tree = model_tree.fit(dtree_data.train_X,dtree_data.train_Y)
 	r2 = r2_score(dtree_data.test_Y,result_tree.predict(dtree_data.test_X))
-	print('r2_score = '+str(r2))
+	print('r2_score = {0:.4f}'tr(r2))
 	pickle.dump(result_tree,output_filename)
 
 if __name__ == '__main__':
