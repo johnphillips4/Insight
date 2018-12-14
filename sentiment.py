@@ -8,11 +8,13 @@ import gensim
 import sklearn
 import pyLDAvis.gensim as gensimvis
 import sys
+
 from nltk.tokenize import RegexpTokenizer
 from gensim.models.keyedvectors import KeyedVectors
 from gensim.test.utils import common_texts
 from gensim.corpora.dictionary import Dictionary
 from gensim.models import LdaModel
+
 from utils import sentiment_utils
 
 def main(df,output_filename):
