@@ -48,8 +48,8 @@ def main(df,output_filename,rng):
 	pickle.dump(result_tree,output_filename)
 
 if __name__ == '__main__':
-	'''Takes one necessary argument'''
-	print(sys.argv)
+	'''Takes one reqd argument'''
+	#print(sys.argv)
 	try:
 		file_loc = sys.argv[1]
 		df = pd.read_pickle(file_loc)  #can be changed to read_csv as necessary
